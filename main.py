@@ -5,9 +5,16 @@ import RPi.GPIO as GPIO
 from time import sleep
 from math import asin
 
+# Config
 BASE_SPEED = 25
 RADS_MULTIPLIER = 5
 SENSORS_DISTANCE = 11
+
+# Pinout strategy:
+# Sensor top: trig -> GPIO 4, echo -> GPIO 18
+# Sensor bottom: trig -> GPIO 17, echo -> GPIO 27
+# Motors: in1 -> GPIO 12, in2 -> GPIO 13, ena -> GPIO 6, in3 -> GPIO 20, in4 -> GPIO 21, enb -> GPIO 26
+# More about: https://www.waveshare.com/wiki/AlphaBot#Motor_driver_module
 
 # Set BCM naming scheme
 GPIO.setmode(GPIO.BCM)
