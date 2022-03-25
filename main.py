@@ -1,18 +1,19 @@
-from AlphaBot import AlphaBot
-from Ultrasonic import Ultrasonic
+from GPIO.Motors import Motors
+from GPIO.Ultrasonic import Ultrasonic
 from threading import Thread
 import RPi.GPIO as GPIO
 from time import sleep
-from math import asin
+from helpers import constrain
 
 # Config
-BASE_SPEED = 25
-RADS_MULTIPLIER = 5
-SENSORS_DISTANCE = 11
+BASE_SPEED = 20
+DISTANCE = 20
+K = 0.5
+MIN_SPEED = 5
+MAX_SPEED = 30
 
 # Pinout strategy:
-# Sensor top: trig -> GPIO 4, echo -> GPIO 18
-# Sensor bottom: trig -> GPIO 17, echo -> GPIO 27
+# Sensor left: trig -> GPIO 4, echo -> GPIO 18
 # Motors: in1 -> GPIO 12, in2 -> GPIO 13, ena -> GPIO 6, in3 -> GPIO 20, in4 -> GPIO 21, enb -> GPIO 26
 # More about: https://www.waveshare.com/wiki/AlphaBot#Motor_driver_module
 
@@ -20,29 +21,23 @@ SENSORS_DISTANCE = 11
 GPIO.setmode(GPIO.BCM)
 
 # Initialize our sensors
-car = AlphaBot()
-sensorT = Ultrasonic(4, 18)
-sensorB = Ultrasonic(17, 27)
+car = Motors()
+sensorL = Ultrasonic(4, 18)
 
 # Global variables, used by distance_calculator to calculate the distance between the sensors
-rads = 0
 run_thread = True
+distance = 0
 
 def distance_calculator():
-  global rads
+  global distance
+  GPIO.setmode(GPIO.BCM)
 
   # Run until the thread is stopped
   while run_thread:
     # Get the distances between the sensors, and use the sin/cos formula: rads = arcosin(distance / sensor_distance)
-    distanceT = sensorT.measure()
-    distanceB = sensorB.measure()
-    c = distanceT - distanceB
-    if abs(c) <= SENSORS_DISTANCE:
-      s = c / SENSORS_DISTANCE
-      rads = asin(s)
+    distance = sensorL.measure()
     sleep(.5)
   print("Exiting from thread")
-
 
 distance_thread = Thread(target=distance_calculator)
 distance_thread.start()
@@ -55,11 +50,16 @@ def exit_handler():
   GPIO.cleanup()
   distance_thread.join()
 
-# Run endlessly the motors, adjust the left speed by it's distance
+# Run endlessly the motors, adjust the left and right speed by it's distance from the left wall
 try:
   while True:
-    left = BASE_SPEED + (rads * RADS_MULTIPLIER)
-    print(f"Left: {left}")
-    car.setMotor(left, -BASE_SPEED)      
-except:
+    right = constrain(BASE_SPEED - K * (distance - DISTANCE), MIN_SPEED, MAX_SPEED)
+    left = constrain(BASE_SPEED + K * (distance - DISTANCE), MIN_SPEED, MAX_SPEED)
+    
+    print(f"Left: {left} Right: {right}")
+    car.setMotor(-left, right)
+except KeyboardInterrupt:
+  exit_handler()
+except Exception as e:
+  print(e)
   exit_handler()
