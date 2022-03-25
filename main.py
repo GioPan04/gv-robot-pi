@@ -53,8 +53,9 @@ def exit_handler():
 # Run endlessly the motors, adjust the left and right speed by it's distance from the left wall
 try:
   while True:
-    right = constrain(BASE_SPEED - K * (distance - DISTANCE), MIN_SPEED, MAX_SPEED)
-    left = constrain(BASE_SPEED + K * (distance - DISTANCE), MIN_SPEED, MAX_SPEED)
+    speed = K * (distance - DISTANCE)
+    right = constrain(BASE_SPEED - speed, MIN_SPEED, MAX_SPEED)
+    left = constrain(BASE_SPEED + speed, MIN_SPEED, MAX_SPEED)
     
     print(f"Left: {left} Right: {right}")
     car.setMotor(-left, right)
