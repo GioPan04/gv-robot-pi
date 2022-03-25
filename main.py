@@ -29,12 +29,12 @@ run_thread = True
 distance = 0
 
 def distance_calculator():
+  """Read endlessly the value of the sensor"""
   global distance
   GPIO.setmode(GPIO.BCM)
 
   # Run until the thread is stopped
   while run_thread:
-    # Get the distances between the sensors, and use the sin/cos formula: rads = arcosin(distance / sensor_distance)
     distance = sensorL.measure()
     sleep(.5)
   print("Exiting from thread")

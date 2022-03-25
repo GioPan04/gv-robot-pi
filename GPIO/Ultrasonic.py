@@ -10,7 +10,8 @@ class Ultrasonic(object):
     GPIO.output(trig, 0)
     GPIO.setup(echo, GPIO.IN)
   
-  def measure(self):
+  def measure(self) -> int:
+    """Measure the value from the ultrasonic sensor"""
     GPIO.output(self.trig, 1)
     time.sleep(0.00001)
     GPIO.output(self.trig, 0)
