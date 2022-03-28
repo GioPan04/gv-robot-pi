@@ -1,9 +1,8 @@
 from GPIO.Motors import Motors
 from GPIO.Ultrasonic import Ultrasonic
-from threading import Thread
 import RPi.GPIO as GPIO
-from time import sleep
-from helpers import constrain
+from helpers import constrain,exit_handler
+from distance_thread import DistanceThread
 
 # Config
 BASE_SPEED = 35
@@ -24,35 +23,13 @@ GPIO.setmode(GPIO.BCM)
 car = Motors()
 sensorL = Ultrasonic(4, 18)
 
-# Global variables, used by distance_calculator to calculate the distance between the sensors
-run_thread = True
-distance = 0
-
-def distance_calculator():
-  """Read endlessly the value of the sensor"""
-  global distance
-  GPIO.setmode(GPIO.BCM)
-
-  # Run until the thread is stopped
-  while run_thread:
-    distance = sensorL.measure()
-    sleep(.3)
-  print("Exiting from thread")
-
-distance_thread = Thread(target=distance_calculator)
+distance_thread = DistanceThread("SensorL Thread", sensorL)
 distance_thread.start()
-
-# When the program exit cleanup the GPIO and stop the thread
-def exit_handler():
-  global run_thread
-  run_thread = False
-  print("Exiting...")
-  GPIO.cleanup()
-  distance_thread.join()
 
 # Run endlessly the motors, adjust the left and right speed by it's distance from the left wall
 try:
   while True:
+    distance = distance_thread.distance
     speed = K * (distance - DISTANCE)
     right = constrain(BASE_SPEED + speed, MIN_SPEED, MAX_SPEED)
     left = constrain(BASE_SPEED - speed, MIN_SPEED, MAX_SPEED)
@@ -60,7 +37,7 @@ try:
     print(f"Left: {left} Right: {right} Distance: {distance}")
     car.setMotor(-left, right)
 except KeyboardInterrupt:
-  exit_handler()
+  exit_handler(distance_thread)
 except Exception as e:
   print(e)
-  exit_handler()
+  exit_handler(distance_thread)
