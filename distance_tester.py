@@ -13,4 +13,4 @@ sensor = Ultrasonic(4, 18)
 while True:
   distance = sensor.measure()
   print(f"{distance}cm")
-  sleep(0.5)
+  sleep(0.3)

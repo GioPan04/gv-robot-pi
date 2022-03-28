@@ -6,11 +6,11 @@ from time import sleep
 from helpers import constrain
 
 # Config
-BASE_SPEED = 20
+BASE_SPEED = 35
 DISTANCE = 20
-K = 0.5
-MIN_SPEED = 5
-MAX_SPEED = 30
+K = 0.3
+MIN_SPEED = 25
+MAX_SPEED = 50
 
 # Pinout strategy:
 # Sensor left: trig -> GPIO 4, echo -> GPIO 18
@@ -36,7 +36,7 @@ def distance_calculator():
   # Run until the thread is stopped
   while run_thread:
     distance = sensorL.measure()
-    sleep(.5)
+    sleep(.3)
   print("Exiting from thread")
 
 distance_thread = Thread(target=distance_calculator)
@@ -54,10 +54,10 @@ def exit_handler():
 try:
   while True:
     speed = K * (distance - DISTANCE)
-    right = constrain(BASE_SPEED - speed, MIN_SPEED, MAX_SPEED)
-    left = constrain(BASE_SPEED + speed, MIN_SPEED, MAX_SPEED)
-    
-    print(f"Left: {left} Right: {right}")
+    right = constrain(BASE_SPEED + speed, MIN_SPEED, MAX_SPEED)
+    left = constrain(BASE_SPEED - speed, MIN_SPEED, MAX_SPEED)
+
+    print(f"Left: {left} Right: {right} Distance: {distance}")
     car.setMotor(-left, right)
 except KeyboardInterrupt:
   exit_handler()
