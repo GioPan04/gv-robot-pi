@@ -1,7 +1,7 @@
 from GPIO.Motors import Motors
 from GPIO.Ultrasonic import Ultrasonic
 import RPi.GPIO as GPIO
-from helpers import exit_handler,calculate_speed
+from helpers import calculate_speed
 from core.distance_thread import DistanceThread
 
 # Pinout strategy:
@@ -32,7 +32,10 @@ if __name__ == '__main__':
       print(f"Left: {left} Right: {right} Distance: {distance}")
       car.setMotor(-left, right)
   except KeyboardInterrupt:
-    exit_handler(distance_thread)
+    distance_thread.stop()
   except Exception as e:
     print(e)
-    exit_handler(distance_thread)
+    distance_thread.stop()
+  finally:
+    print("Killing")
+    GPIO.cleanup()

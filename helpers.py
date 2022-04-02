@@ -10,12 +10,6 @@ def constrain(value: int, min: int, max: int) -> int:
     return value
   return max
 
-# When the program exit cleanup the GPIO and stop the thread
-def exit_handler(thread: DistanceThread) -> None:
-  print("Exiting...")
-  GPIO.cleanup()
-  thread.stop()
-
 def calculate_speed(distance: float) -> tuple[int, int]:
   speed = config.K * (distance - config.DISTANCE)
   right = constrain(config.BASE_SPEED + speed, config.MIN_SPEED, config.MAX_SPEED)

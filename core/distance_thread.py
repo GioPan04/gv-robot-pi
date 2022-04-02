@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 from time import sleep
 from GPIO.Ultrasonic import Ultrasonic
-from base_thread import BaseThread
+from core.base_thread import BaseThread
 
 class DistanceThread(BaseThread):
   def __init__(self, name: str, sensors: list[Ultrasonic]):

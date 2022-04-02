@@ -20,8 +20,9 @@ class BaseThread(Thread):
     while self._run:
       self.tick()
     
-    self.print("Stopping thread")
+    self.print("Thread stopped")
   
   def stop(self):
     self._run = False
+    self.print("Stopping thread")
     self.join()
