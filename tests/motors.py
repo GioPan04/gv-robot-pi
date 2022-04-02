@@ -2,24 +2,27 @@ from time import sleep
 from GPIO.Motor import Motor
 import RPi.GPIO as GPIO
 
-motor = Motor("Motor", 6, 13, 19, 26)
+def test():
+  GPIO.setmode(GPIO.BCM)
 
-motor.start()
+  motor = Motor("Motor", 6, 13, 19, 26)
 
-sleep(10)
+  motor.start()
 
-motor.setSpeed(0)
+  sleep(10)
 
-sleep(3)
+  motor.setSpeed(0)
 
-motor.setSpeed(100)
+  sleep(3)
 
-sleep(3)
+  motor.setSpeed(100)
 
-motor.setSpeed(5)
+  sleep(3)
 
-sleep(3)
+  motor.setSpeed(5)
 
-motor.stop()
+  sleep(3)
 
-GPIO.cleanup()
+  motor.stop()
+
+  GPIO.cleanup()

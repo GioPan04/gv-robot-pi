@@ -2,7 +2,7 @@ from GPIO.Motors import Motors
 from GPIO.Ultrasonic import Ultrasonic
 import RPi.GPIO as GPIO
 from helpers import exit_handler,calculate_speed
-from distance_thread import DistanceThread
+from core.distance_thread import DistanceThread
 
 # Pinout strategy:
 # Sensor left: trig -> GPIO 4, echo -> GPIO 18

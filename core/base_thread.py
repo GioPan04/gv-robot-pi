@@ -1,4 +1,5 @@
 from threading import Thread
+from core.ansicolors import AnsiColors
 
 class BaseThread(Thread):
   def __init__(self, name: str) -> None:
@@ -6,7 +7,7 @@ class BaseThread(Thread):
     self._run = True
   
   def print(self, message: str) -> None:
-    print(f"[{self.name}]: {message}")
+    print(f"[{AnsiColors.OKGREEN}{self.name}{AnsiColors.ENDC}]: {message}")
   
   def setup(self):
     pass
@@ -23,3 +24,4 @@ class BaseThread(Thread):
   
   def stop(self):
     self._run = False
+    self.join()

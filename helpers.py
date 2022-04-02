@@ -1,6 +1,6 @@
 import config
 import RPi.GPIO as GPIO
-from distance_thread import DistanceThread
+from core.distance_thread import DistanceThread
 
 def constrain(value: int, min: int, max: int) -> int:
   """Constrain a value between two values"""
