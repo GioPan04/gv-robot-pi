@@ -14,9 +14,9 @@ GPIO.setmode(GPIO.BCM)
 
 # Initialize our sensors
 car = Motors()
-sensorT = Ultrasonic(4, 18)
-sensorM = Ultrasonic(4, 18)
-sensorB = Ultrasonic(4, 18)
+sensorT = Ultrasonic(4, 14)
+sensorM = Ultrasonic(17, 27)
+sensorB = Ultrasonic(15, 18)
 distance_thread = DistanceThread("SensorL Thread", [sensorT, sensorM, sensorB])
 
 

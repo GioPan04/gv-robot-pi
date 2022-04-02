@@ -17,14 +17,14 @@ class DistanceThread(Thread):
 
     # Run until the thread is stopped
     while self.__run_thread:
-      distances = []
+      distances = [None]*3
       for i,sensor in enumerate(self.__sensors):
         distances[i] = sensor.measure()
+        sleep(.2)
 
       self.distance = min(distances)
       self.closest = distances.index(self.distance)
 
-      sleep(.3)
     print("Exiting from thread")
   
   def stop(self):
