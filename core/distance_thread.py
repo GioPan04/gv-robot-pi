@@ -1,4 +1,4 @@
-import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO # type: ignore
 from time import sleep
 from GPIO.Ultrasonic import Ultrasonic
 from core.base_thread import BaseThread

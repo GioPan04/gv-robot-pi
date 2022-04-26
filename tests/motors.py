@@ -1,6 +1,6 @@
 from time import sleep
 from GPIO.Motor import Motor
-import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO # type: ignore
 
 def test():
   GPIO.setmode(GPIO.BCM)

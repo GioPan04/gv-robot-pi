@@ -1,5 +1,5 @@
 from GPIO.Ultrasonic import Ultrasonic
-import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO # type: ignore
 from helpers import calculate_speed
 from core.distance_thread import DistanceThread
 import config
