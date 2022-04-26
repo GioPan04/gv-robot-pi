@@ -18,7 +18,9 @@ class DistanceThread(BaseThread):
     distances = [None]*3
     for i,sensor in enumerate(self.__sensors):
       distances[i] = sensor.measure()
+      self.print(f"{i}: {self.distance}")
       sleep(.2)
 
     self.distance = min(distances)
     self.closest = distances.index(self.distance)
+    self.print(f"Distance: {self.distance} by {self.closest}")
