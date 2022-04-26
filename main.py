@@ -1,36 +1,43 @@
-from GPIO.Motors import Motors
 from GPIO.Ultrasonic import Ultrasonic
 import RPi.GPIO as GPIO
 from helpers import calculate_speed
 from core.distance_thread import DistanceThread
+import config
 
 # Pinout strategy:
-# Sensor left: trig -> GPIO 4, echo -> GPIO 18
-# Motors: in1 -> GPIO 12, in2 -> GPIO 13, ena -> GPIO 6, in3 -> GPIO 20, in4 -> GPIO 21, enb -> GPIO 26
-# More about: https://www.waveshare.com/wiki/AlphaBot#Motor_driver_module
+# Sensor top: trig -> GPIO 4, echo -> GPIO 14
+# Sensor middle: trig -> GPIO 17, echo -> GPIO 27
+# Sensor bottom: trig -> GPIO 15, echo -> GPIO 18
+# Motor left: step -> 2
+# Motor right: step -> 3
 
 # Set BCM naming scheme
 GPIO.setmode(GPIO.BCM)
 
-# Initialize our sensors
-car = Motors()
-sensorT = Ultrasonic(4, 14)
-sensorM = Ultrasonic(17, 27)
-sensorB = Ultrasonic(15, 18)
-distance_thread = DistanceThread("SensorL Thread", [sensorT, sensorM, sensorB])
+# Initialize external devices
+motorL = GPIO.PWM(config.MOTOR_LEFT_PIN, 500)
+motorR = GPIO.PWM(config.MOTOR_RIGHT_PIN, 500)
+sensorT = Ultrasonic(config.SONIC_TOP_TRG_PIN, config.SONIC_TOP_ECH_PIN)
+sensorM = Ultrasonic(config.SONIC_MDL_TRG_PIN, config.SONIC_MDL_ECH_PIN)
+sensorB = Ultrasonic(config.SONIC_BTM_TRG_PIN, config.SONIC_BTM_ECH_PIN)
 
+# Separated thread that endlessly read the sonic sensor and get the lower value
+distance_thread = DistanceThread("SensorL Thread", [sensorT, sensorM, sensorB])
 
 if __name__ == '__main__':
   distance_thread.start()
+  motorL.start(50)
+  motorR.start(50)
 
   # Run endlessly the motors, adjust the left and right speed by it's distance from the left wall
   try:
     while True:
       distance = distance_thread.distance
       (left, right) = calculate_speed(distance)
+      motorL.ChangeFrequency(left)
+      motorR.ChangeFrequency(right)
 
-      print(f"Left: {left} Right: {right} Distance: {distance}")
-      car.setMotor(-left, right)
+      print(f"Left: {left}Hz Right: {right}Hz Distance: {distance}cm")
   except KeyboardInterrupt:
     distance_thread.stop()
   except Exception as e:
