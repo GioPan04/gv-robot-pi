@@ -1,7 +1,8 @@
+import RPi.GPIO as GPIO  # type: ignore
 from GPIO.Ultrasonic import Ultrasonic
-import RPi.GPIO as GPIO # type: ignore
 from helpers import calculate_speed
 from core.distance_thread import DistanceThread
+from core.color_thread import ColorThread
 import config
 
 # Pinout strategy:
@@ -14,6 +15,8 @@ import config
 # Setup GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
+GPIO.setup(config.MOTOR_LEFT_PIN, GPIO.OUT)
+GPIO.setup(config.MOTOR_RIGHT_PIN, GPIO.OUT)
 
 # Initialize external devices
 motorL = GPIO.PWM(config.MOTOR_LEFT_PIN, 500)
@@ -24,9 +27,11 @@ sensorB = Ultrasonic(config.SONIC_BTM_TRG_PIN, config.SONIC_BTM_ECH_PIN)
 
 # Separated thread that endlessly read the sonic sensor and get the lower value
 distance_thread = DistanceThread("Distance", [sensorT, sensorM, sensorB])
+color_thread = ColorThread("Colors")
 
 if __name__ == '__main__':
   distance_thread.start()
+  color_thread.start()
   motorL.start(50)
   motorR.start(50)
 
@@ -38,12 +43,13 @@ if __name__ == '__main__':
       motorL.ChangeFrequency(left)
       motorR.ChangeFrequency(right)
 
-      print(f"Left: {left}Hz Right: {right}Hz Distance: {distance}cm")
+      # print(f"Left: {left}Hz Right: {right}Hz Distance: {distance}cm")
   except KeyboardInterrupt: # Don't log ^C
     pass
   except Exception as e:
     print(e)
   finally:
     print("Killing")
+    color_thread.stop()
     distance_thread.stop()
     GPIO.cleanup()

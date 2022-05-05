@@ -1,5 +1,7 @@
 # GV Robot Pi configuration file
 
+DEBUG = True
+
 # Movement
 DISTANCE = 20
 BASE_SPEED = 500
