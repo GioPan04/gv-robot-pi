@@ -11,8 +11,9 @@ import config
 # Motor left: step -> 2
 # Motor right: step -> 3
 
-# Set BCM naming scheme
+# Setup GPIO
 GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
 
 # Initialize external devices
 motorL = GPIO.PWM(config.MOTOR_LEFT_PIN, 500)
@@ -22,7 +23,7 @@ sensorM = Ultrasonic(config.SONIC_MDL_TRG_PIN, config.SONIC_MDL_ECH_PIN)
 sensorB = Ultrasonic(config.SONIC_BTM_TRG_PIN, config.SONIC_BTM_ECH_PIN)
 
 # Separated thread that endlessly read the sonic sensor and get the lower value
-distance_thread = DistanceThread("SensorL Thread", [sensorT, sensorM, sensorB])
+distance_thread = DistanceThread("Distance", [sensorT, sensorM, sensorB])
 
 if __name__ == '__main__':
   distance_thread.start()
@@ -38,11 +39,11 @@ if __name__ == '__main__':
       motorR.ChangeFrequency(right)
 
       print(f"Left: {left}Hz Right: {right}Hz Distance: {distance}cm")
-  except KeyboardInterrupt:
-    distance_thread.stop()
+  except KeyboardInterrupt: # Don't log ^C
+    pass
   except Exception as e:
     print(e)
-    distance_thread.stop()
   finally:
     print("Killing")
+    distance_thread.stop()
     GPIO.cleanup()

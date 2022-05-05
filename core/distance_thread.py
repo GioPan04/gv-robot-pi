@@ -12,6 +12,7 @@ class DistanceThread(BaseThread):
   
   def setup(self):
     GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(False)
   
   def tick(self):
     """Read endlessly the value of the sensor"""
