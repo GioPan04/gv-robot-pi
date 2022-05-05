@@ -1,4 +1,5 @@
 from GPIO.Motor import Motor
+from GPIO.Servo import Servo
 import RPi.GPIO as GPIO  # type: ignore
 from GPIO.Ultrasonic import Ultrasonic
 from helpers import calculate_speed
@@ -12,6 +13,7 @@ import config
 # Sensor bottom: trig -> GPIO 15, echo -> GPIO 18
 # Motor left: step -> 2
 # Motor right: step -> 3
+# Servo motor: data -> 23
 
 # Setup GPIO
 GPIO.setmode(GPIO.BCM)
@@ -23,6 +25,7 @@ motorR = Motor(config.MOTOR_RIGHT_PIN)
 sensorT = Ultrasonic(config.SONIC_TOP_TRG_PIN, config.SONIC_TOP_ECH_PIN)
 sensorM = Ultrasonic(config.SONIC_MDL_TRG_PIN, config.SONIC_MDL_ECH_PIN)
 sensorB = Ultrasonic(config.SONIC_BTM_TRG_PIN, config.SONIC_BTM_ECH_PIN)
+servo = Servo(config.SERVO_PIN)
 
 # Separated thread that endlessly read the sonic sensor and get the lower value
 distance_thread = DistanceThread("Distance", [sensorT, sensorM, sensorB])
