@@ -11,4 +11,6 @@ class Motor:
   
   def change_speed(self, hrz) -> None:
     self.pwm.ChangeFrequency(hrz)
-    
+
+  def stop(self) -> None:
+    self.pwm.stop()

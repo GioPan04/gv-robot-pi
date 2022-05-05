@@ -13,7 +13,7 @@ import config
 # Sensor bottom: trig -> GPIO 15, echo -> GPIO 18
 # Motor left: step -> 2
 # Motor right: step -> 3
-# Servo motor: data -> 23
+# Servo motor: data -> 13
 
 # Setup GPIO
 GPIO.setmode(GPIO.BCM)
@@ -52,6 +52,9 @@ if __name__ == '__main__':
     print(e)
   finally:
     print("Killing")
+    motorL.stop()
+    motorR.stop()
+    servo.stop()
     color_thread.stop()
     distance_thread.stop()
     GPIO.cleanup()
