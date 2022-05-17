@@ -1,5 +1,7 @@
 # GV Robot Pi configuration file
 
+DEBUG = True
+
 # Movement
 DISTANCE = 10
 BASE_SPEED = 500
@@ -19,3 +21,6 @@ SONIC_MDL_TRG_PIN = 17
 SONIC_MDL_ECH_PIN = 27
 SONIC_BTM_TRG_PIN = 21
 SONIC_BTM_ECH_PIN = 20
+
+## Servo motor
+SERVO_PIN = 23

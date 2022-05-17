@@ -8,5 +8,5 @@ This repo is for the code of one robot that me and my team created for an afters
 
 ## Hardware used
 - Raspberry Pi 3B+
-- 2 A4988 Stepper motor driver
-- 3 HC-SR04 Ultrasonic distance sensor
+- A4988 (x2) Stepper motor driver
+- HC-SR04 (x3) Ultrasonic distance sensor

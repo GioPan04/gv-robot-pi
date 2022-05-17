@@ -1,6 +1,6 @@
 from time import sleep
 from GPIO.Ultrasonic import Ultrasonic
-import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO # type: ignore
 
 """
   This file is only for testing the left sensor
