@@ -13,6 +13,10 @@ import config
 
 # Set BCM naming scheme
 GPIO.setmode(GPIO.BCM)
+GPIO.setup(config.MOTOR_LEFT_PIN, GPIO.OUT)
+GPIO.setup(config.MOTOR_RIGHT_PIN, GPIO.OUT)
+GPIO.setup(26, GPIO.OUT)
+GPIO.output(26, True)
 
 # Initialize external devices
 motorL = GPIO.PWM(config.MOTOR_LEFT_PIN, 500)
