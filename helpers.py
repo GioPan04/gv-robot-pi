@@ -12,9 +12,12 @@ def calculate_speed(distance: float) -> tuple[int, int]:
   right = config.BASE_SPEED
   left = config.BASE_SPEED
 
-  if(distance > config.DISTANCE):
-    right += config.TURNING_SPEED
-  else:
+  if(distance > 150):
     left += config.TURNING_SPEED
+    right -= config.TURNING_SPEED
+  elif(distance < 130):
+    right += config.TURNING_SPEED
+    left -= config.TURNING_SPEED
+
 
   return left, right
