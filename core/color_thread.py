@@ -14,7 +14,12 @@ class ColorThread(BaseThread):
 
   def setup(self):
     pixy.init()
+    pixy.set_lamp(1, 1)
     pixy.change_prog("color_connected_components")
+  
+  def stop(self):
+    pixy.set_lamp(0, 0)
+    super().stop()
 
   def tick(self):
     self.__blocks_count = pixy.ccc_get_blocks(self.__colors_length, self.__blocks)
