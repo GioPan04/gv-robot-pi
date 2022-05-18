@@ -63,6 +63,5 @@ if __name__ == '__main__':
     print("Killing")
     motorL.stop()
     motorR.stop()
-    servo.stop()
     color_thread.stop()
     GPIO.cleanup()
