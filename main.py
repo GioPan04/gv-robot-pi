@@ -1,11 +1,17 @@
 from GPIO.Motor import Motor
-import RPi.GPIO as GPIO  # type: ignore
+import RPi.GPIO as GPIO
+from core.ansicolors import AnsiColors  # type: ignore
 from helpers import calculate_speed
 from core.color_thread import ColorThread
 import config
 import GPIO.PCF8591 as ADC
 from gpiozero import Servo # type: ignore
 from gpiozero.pins.pigpio import PiGPIOFactory # type: ignore
+
+logo = open("./logo.txt", "r")
+print(AnsiColors.OKBLUE + AnsiColors.BOLD + logo.read() + AnsiColors.ENDC + "\n")
+logo.close()
+
 factory = PiGPIOFactory()
 
 # Pinout strategy:

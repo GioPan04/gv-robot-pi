@@ -16,6 +16,7 @@ class BaseThread(Thread):
     pass
 
   def run(self):
+    self.print("Starting thread")
     self.setup()
     while self._run:
       self.tick()
