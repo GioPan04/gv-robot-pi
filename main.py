@@ -49,7 +49,7 @@ if __name__ == '__main__':
       motorL.change_speed(left)
       motorR.change_speed(right)
 
-      if(color_thread.color == 3):
+      if(color_thread.last_color == 1):
         servo.value = 0.2
       else:
         servo.min()
