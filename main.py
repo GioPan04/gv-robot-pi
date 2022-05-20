@@ -22,7 +22,7 @@ logo.close()
 # Setup GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-ADC.setup(0x48)
+ADC.setup(config.IR_ADDR)
 factory = PiGPIOFactory()
 
 motorL = Motor(config.MOTOR_LEFT_PIN, config.MOTOR_LEFT_DIR_PIN)
@@ -60,7 +60,7 @@ if __name__ == '__main__':
 
     initial = time()
     while initial + 7 > time():
-      distance = ADC.read(2)
+      distance = ADC.read(config.IR_CHNL)
       (left, right) = calculate_speed(distance, 78, config.BASE_SPEED + 200, config.TURNING_SPEED)
       motorL.change_speed(left)
       motorR.change_speed(right)
@@ -77,7 +77,7 @@ if __name__ == '__main__':
 
   # Go farward forever and stay straight
     while True:
-      distance = ADC.read(2)
+      distance = ADC.read(config.IR_CHNL)
       (left, right) = calculate_speed(distance, 135, config.BASE_SPEED, config.TURNING_SPEED)
       motorL.change_speed(left)
       motorR.change_speed(right)

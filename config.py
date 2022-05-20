@@ -27,5 +27,9 @@ SONIC_BTM_ECH_PIN = 20
 ## Servo motor
 SERVO_PIN = 12
 
+## IR sensor
+IR_ADDR=0x48
+IR_CHNL=2
+
 # Blocks
 BLOCKS_WHITELIST = [ 1 ]
