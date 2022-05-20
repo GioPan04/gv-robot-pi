@@ -8,16 +8,16 @@ def constrain(value: int, min: int, max: int) -> int:
     return value
   return max
 
-def calculate_speed(distance: float, other_distance: float) -> tuple[int, int]:
-  right = config.BASE_SPEED
-  left = config.BASE_SPEED
+def calculate_speed(current_distance: float, distance: float, base_speed: float, turning_speed: float) -> tuple[int, int]:
+  right = base_speed
+  left = base_speed
 
-  if(distance >= other_distance):
-    left += config.TURNING_SPEED
-    right -= config.TURNING_SPEED
+  if(current_distance >= distance):
+    left += turning_speed
+    right -= turning_speed
   else:
-    right += config.TURNING_SPEED
-    left -= config.TURNING_SPEED
+    right += turning_speed
+    left -= turning_speed
 
 
   return left, right

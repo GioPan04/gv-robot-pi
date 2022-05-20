@@ -71,9 +71,9 @@ if __name__ == '__main__':
 
     while initial + 7 > time():
       distance = ADC.read(2)
-      (left, right) = calculate_speed(distance, 78)
-      motorL.change_speed(left + 200)
-      motorR.change_speed(right + 200)
+      (left, right) = calculate_speed(distance, 78, config.BASE_SPEED + 200, config.TURNING_SPEED)
+      motorL.change_speed(left)
+      motorR.change_speed(right)
     
 
     GPIO.output(26, False) # destra
@@ -89,7 +89,7 @@ if __name__ == '__main__':
     while True:
       #distance = distance_thread.distance
       distance = ADC.read(2)
-      (left, right) = calculate_speed(distance, 135)
+      (left, right) = calculate_speed(distance, 135, config.BASE_SPEED, config.TURNING_SPEED)
       motorL.change_speed(left)
       motorR.change_speed(right)
 
