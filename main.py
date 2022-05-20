@@ -28,13 +28,13 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 GPIO.setup(config.MOTOR_LEFT_PIN, GPIO.OUT)
 GPIO.setup(config.MOTOR_RIGHT_PIN, GPIO.OUT)
-GPIO.setup(26, GPIO.OUT)
-GPIO.output(26, True) # destra
-GPIO.setup(13, GPIO.OUT)
-GPIO.output(13, False) # sinistra
+GPIO.setup(config.MOTOR_RIGHT_DIR_PIN, GPIO.OUT)
+GPIO.setup(config.MOTOR_LEFT_DIR_PIN, GPIO.OUT)
 
+# Setup motors to go farward
+GPIO.output(config.MOTOR_RIGHT_DIR_PIN, False)
+GPIO.output(config.MOTOR_LEFT_DIR_PIN, False)
 
-# Initialize external devices
 motorL = Motor(config.MOTOR_LEFT_PIN)
 motorR = Motor(config.MOTOR_RIGHT_PIN)
 servo = Servo(config.SERVO_PIN, pin_factory=factory, initial_value=-1)
@@ -45,7 +45,6 @@ color_thread = ColorThread("Colors")
 ADC.setup(0x48)
 
 if __name__ == '__main__':
-  #distance_thread.start()
   color_thread.start()
   motorL.start()
   motorR.start()
@@ -55,20 +54,20 @@ if __name__ == '__main__':
     motorR.change_speed(150)
     sleep(1)
 
-    GPIO.output(26, True) # destra
-    GPIO.output(13, True) # sinistra
+    GPIO.output(config.MOTOR_RIGHT_DIR_PIN, False) # destra
+    GPIO.output(config.MOTOR_LEFT_DIR_PIN, True) # sinistra
     motorL.change_speed(500)
     motorR.change_speed(500)
     sleep(1.2)
 
     motorR.change_speed(1)
     motorL.change_speed(1)
-
     sleep(0.5)
-    GPIO.output(13, False) # sinistra
+
+    GPIO.output(config.MOTOR_RIGHT_DIR_PIN, False) # destra
+    GPIO.output(config.MOTOR_LEFT_DIR_PIN, False) # sinistra
 
     initial = time()
-
     while initial + 7 > time():
       distance = ADC.read(2)
       (left, right) = calculate_speed(distance, 78, config.BASE_SPEED + 200, config.TURNING_SPEED)
@@ -76,13 +75,14 @@ if __name__ == '__main__':
       motorR.change_speed(right)
     
 
-    GPIO.output(26, False) # destra
-    GPIO.output(13, False) # sinistra
+    GPIO.output(config.MOTOR_RIGHT_DIR_PIN, True) # destra
+    GPIO.output(config.MOTOR_LEFT_DIR_PIN, False) # sinistra
     motorL.change_speed(500)
     motorR.change_speed(500)
     sleep(1.2)
 
-    GPIO.output(26, True)
+    GPIO.output(config.MOTOR_RIGHT_DIR_PIN, False) # destra
+    GPIO.output(config.MOTOR_LEFT_DIR_PIN, False) # sinistra
 
 
   # Run endlessly the motors, adjust the left and right speed by it's distance from the left wall
