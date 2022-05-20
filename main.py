@@ -26,17 +26,9 @@ factory = PiGPIOFactory()
 # Setup GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-GPIO.setup(config.MOTOR_LEFT_PIN, GPIO.OUT)
-GPIO.setup(config.MOTOR_RIGHT_PIN, GPIO.OUT)
-GPIO.setup(config.MOTOR_RIGHT_DIR_PIN, GPIO.OUT)
-GPIO.setup(config.MOTOR_LEFT_DIR_PIN, GPIO.OUT)
 
-# Setup motors to go farward
-GPIO.output(config.MOTOR_RIGHT_DIR_PIN, False)
-GPIO.output(config.MOTOR_LEFT_DIR_PIN, False)
-
-motorL = Motor(config.MOTOR_LEFT_PIN)
-motorR = Motor(config.MOTOR_RIGHT_PIN)
+motorL = Motor(config.MOTOR_LEFT_PIN, config.MOTOR_LEFT_DIR_PIN)
+motorR = Motor(config.MOTOR_RIGHT_PIN, config.MOTOR_RIGHT_DIR_PIN)
 servo = Servo(config.SERVO_PIN, pin_factory=factory, initial_value=-1)
 
 # Separated thread that endlessly read the sonic sensor and get the lower value
@@ -54,8 +46,8 @@ if __name__ == '__main__':
     motorR.change_speed(150)
     sleep(1)
 
-    GPIO.output(config.MOTOR_RIGHT_DIR_PIN, False) # destra
-    GPIO.output(config.MOTOR_LEFT_DIR_PIN, True) # sinistra
+    motorL.backward()
+    motorR.farward()
     motorL.change_speed(500)
     motorR.change_speed(500)
     sleep(1.2)
@@ -64,8 +56,8 @@ if __name__ == '__main__':
     motorL.change_speed(1)
     sleep(0.5)
 
-    GPIO.output(config.MOTOR_RIGHT_DIR_PIN, False) # destra
-    GPIO.output(config.MOTOR_LEFT_DIR_PIN, False) # sinistra
+    motorL.farward()
+    motorR.farward()
 
     initial = time()
     while initial + 7 > time():
@@ -75,15 +67,14 @@ if __name__ == '__main__':
       motorR.change_speed(right)
     
 
-    GPIO.output(config.MOTOR_RIGHT_DIR_PIN, True) # destra
-    GPIO.output(config.MOTOR_LEFT_DIR_PIN, False) # sinistra
+    motorL.farward()
+    motorR.backward()
     motorL.change_speed(500)
     motorR.change_speed(500)
     sleep(1.2)
 
-    GPIO.output(config.MOTOR_RIGHT_DIR_PIN, False) # destra
-    GPIO.output(config.MOTOR_LEFT_DIR_PIN, False) # sinistra
-
+    motorL.farward()
+    motorR.farward()
 
   # Run endlessly the motors, adjust the left and right speed by it's distance from the left wall
     while True:
