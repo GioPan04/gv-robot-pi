@@ -32,10 +32,21 @@ servo = Servo(config.SERVO_PIN, pin_factory=factory, initial_value=-1)
 # Read pixy colors in a separated thread
 color_thread = ColorThread()
 
-if __name__ == '__main__':
+def init() -> None:
   color_thread.start()
   motorL.start()
   motorR.start()
+
+def close() -> None:
+  motorL.stop()
+  motorR.stop()
+  servo.close()
+  color_thread.stop()
+  GPIO.cleanup()
+  exit(0)
+
+if __name__ == '__main__':
+  init()
 
   try:
     motorL.change_speed(150)
@@ -91,8 +102,4 @@ if __name__ == '__main__':
     print(e)
   finally:
     print("Killing")
-    motorL.stop()
-    motorR.stop()
-    servo.close()
-    color_thread.stop()
-    GPIO.cleanup()
+    close()

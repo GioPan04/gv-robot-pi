@@ -2,6 +2,9 @@
 
 This repo is for the code of one robot that me and my team created for an afterschool project.
 
+## The journey
+![journey](journey.jpg)
+
 ## Dependencies
 - GPIO (preinstalled on Raspberry Pi OS)
 - Pixy (You'll have to compile it, instructions on [pixy website](https://docs.pixycam.com/wiki/doku.php?id=wiki:v2:building_libpixyusb_as_a_python_module_on_linux))
