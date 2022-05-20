@@ -4,7 +4,7 @@ import core.pixy.pixy as pixy
 import config
 
 class ColorThread(BaseThread):
-  def __init__(self, name: str, colors_length = 5) -> None:
+  def __init__(self, name = "Colors", colors_length = 5) -> None:
     super().__init__(name=name)
     self.color = None
     self.last_color = None

@@ -16,25 +16,21 @@ logo.close()
 factory = PiGPIOFactory()
 
 # Pinout strategy:
-# Sensor top: trig -> GPIO 4, echo -> GPIO 14
-# Sensor middle: trig -> GPIO 17, echo -> GPIO 27
-# Sensor bottom: trig -> GPIO 15, echo -> GPIO 18
-# Motor left: step -> 2
-# Motor right: step -> 3
-# Servo motor: data -> 13
+# Motor left: step -> 6, dir -> 13
+# Motor right: step -> 19, dir -> 26
+# Servo motor: data -> 12
 
 # Setup GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
+ADC.setup(0x48)
 
 motorL = Motor(config.MOTOR_LEFT_PIN, config.MOTOR_LEFT_DIR_PIN)
 motorR = Motor(config.MOTOR_RIGHT_PIN, config.MOTOR_RIGHT_DIR_PIN)
 servo = Servo(config.SERVO_PIN, pin_factory=factory, initial_value=-1)
 
-# Separated thread that endlessly read the sonic sensor and get the lower value
-color_thread = ColorThread("Colors")
-
-ADC.setup(0x48)
+# Read pixy colors in a separated thread
+color_thread = ColorThread()
 
 if __name__ == '__main__':
   color_thread.start()
@@ -46,16 +42,19 @@ if __name__ == '__main__':
     motorR.change_speed(150)
     sleep(1)
 
+    # Turn left
     motorL.backward()
     motorR.farward()
     motorL.change_speed(500)
     motorR.change_speed(500)
     sleep(1.2)
 
+    # Wait 0.5 seconds
     motorR.change_speed(1)
     motorL.change_speed(1)
     sleep(0.5)
 
+    # Go farward for 7 seconds and go straight
     motorL.farward()
     motorR.farward()
 
@@ -66,7 +65,7 @@ if __name__ == '__main__':
       motorL.change_speed(left)
       motorR.change_speed(right)
     
-
+    # Turn right
     motorL.farward()
     motorR.backward()
     motorL.change_speed(500)
@@ -78,7 +77,6 @@ if __name__ == '__main__':
 
   # Run endlessly the motors, adjust the left and right speed by it's distance from the left wall
     while True:
-      #distance = distance_thread.distance
       distance = ADC.read(2)
       (left, right) = calculate_speed(distance, 135, config.BASE_SPEED, config.TURNING_SPEED)
       motorL.change_speed(left)
@@ -89,7 +87,7 @@ if __name__ == '__main__':
       else:
         servo.value = -0.7
 
-      print(f"Left: {left}Hz Right: {right}Hz Distance: {distance}cm")
+      # print(f"Left: {left}Hz Right: {right}Hz Distance: {distance}cm")
   except KeyboardInterrupt: # Don't log ^C
     pass
   except Exception as e:
