@@ -4,7 +4,7 @@ from gpiozero import Servo # type: ignore
 import GPIO.PCF8591 as ADC
 from GPIO.Motor import Motor
 from time import sleep, time
-from helpers import calculate_speed
+from helpers import calculate_speed, color_selector
 from core.ansicolors import AnsiColors  # type: ignore
 from core.color_thread import ColorThread
 from gpiozero.pins.pigpio import PiGPIOFactory # type: ignore
@@ -54,7 +54,7 @@ if __name__ == '__main__':
     motorL.change_speed(1)
     sleep(0.5)
 
-    # Go farward for 7 seconds and go straight
+    # Go farward for 7 seconds and stay straight
     motorL.farward()
     motorR.farward()
 
@@ -75,19 +75,16 @@ if __name__ == '__main__':
     motorL.farward()
     motorR.farward()
 
-  # Run endlessly the motors, adjust the left and right speed by it's distance from the left wall
+  # Go farward forever and stay straight
     while True:
       distance = ADC.read(2)
       (left, right) = calculate_speed(distance, 135, config.BASE_SPEED, config.TURNING_SPEED)
       motorL.change_speed(left)
       motorR.change_speed(right)
-
-      if(color_thread.color == 1):
-        servo.value = 0.2
-      else:
-        servo.value = -0.7
-
+      
+      color_selector(color_thread.color, servo)
       # print(f"Left: {left}Hz Right: {right}Hz Distance: {distance}cm")
+
   except KeyboardInterrupt: # Don't log ^C
     pass
   except Exception as e:
@@ -96,5 +93,6 @@ if __name__ == '__main__':
     print("Killing")
     motorL.stop()
     motorR.stop()
+    servo.close()
     color_thread.stop()
     GPIO.cleanup()

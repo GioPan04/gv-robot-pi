@@ -26,3 +26,6 @@ SONIC_BTM_ECH_PIN = 20
 
 ## Servo motor
 SERVO_PIN = 12
+
+# Blocks
+BLOCKS_WHITELIST = [ 1 ]
