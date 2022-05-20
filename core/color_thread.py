@@ -14,7 +14,7 @@ class ColorThread(BaseThread):
 
   def setup(self):
     pixy.init()
-    pixy.set_lamp(1, 1)
+    pixy.set_lamp(0, 0)
     pixy.change_prog("color_connected_components")
   
   def stop(self):

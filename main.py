@@ -7,6 +7,7 @@ import config
 import GPIO.PCF8591 as ADC
 from gpiozero import Servo # type: ignore
 from gpiozero.pins.pigpio import PiGPIOFactory # type: ignore
+from time import sleep, time
 
 logo = open("./logo.txt", "r")
 print(AnsiColors.OKBLUE + AnsiColors.BOLD + logo.read() + AnsiColors.ENDC + "\n")
@@ -28,7 +29,10 @@ GPIO.setwarnings(False)
 GPIO.setup(config.MOTOR_LEFT_PIN, GPIO.OUT)
 GPIO.setup(config.MOTOR_RIGHT_PIN, GPIO.OUT)
 GPIO.setup(26, GPIO.OUT)
-GPIO.output(26, True)
+GPIO.output(26, True) # destra
+GPIO.setup(13, GPIO.OUT)
+GPIO.output(13, False) # sinistra
+
 
 # Initialize external devices
 motorL = Motor(config.MOTOR_LEFT_PIN)
@@ -46,21 +50,55 @@ if __name__ == '__main__':
   motorL.start()
   motorR.start()
 
-  # Run endlessly the motors, adjust the left and right speed by it's distance from the left wall
   try:
+    motorL.change_speed(150)
+    motorR.change_speed(150)
+    sleep(1)
+
+    GPIO.output(26, True) # destra
+    GPIO.output(13, True) # sinistra
+    motorL.change_speed(500)
+    motorR.change_speed(500)
+    sleep(1.2)
+
+    motorR.change_speed(1)
+    motorL.change_speed(1)
+
+    sleep(0.5)
+    GPIO.output(13, False) # sinistra
+
+    initial = time()
+
+    while initial + 7 > time():
+      distance = ADC.read(2)
+      (left, right) = calculate_speed(distance, 78)
+      motorL.change_speed(left + 200)
+      motorR.change_speed(right + 200)
+    
+
+    GPIO.output(26, False) # destra
+    GPIO.output(13, False) # sinistra
+    motorL.change_speed(500)
+    motorR.change_speed(500)
+    sleep(1.2)
+
+    GPIO.output(26, True)
+
+
+  # Run endlessly the motors, adjust the left and right speed by it's distance from the left wall
     while True:
       #distance = distance_thread.distance
       distance = ADC.read(2)
-      (left, right) = calculate_speed(distance)
+      (left, right) = calculate_speed(distance, 135)
       motorL.change_speed(left)
       motorR.change_speed(right)
 
-      if(color_thread.last_color == 1):
+      if(color_thread.color == 1):
         servo.value = 0.2
       else:
-        servo.min()
+        servo.value = -0.7
 
-      # print(f"Left: {left}Hz Right: {right}Hz Distance: {distance}cm")
+      print(f"Left: {left}Hz Right: {right}Hz Distance: {distance}cm")
   except KeyboardInterrupt: # Don't log ^C
     pass
   except Exception as e:
