@@ -1,19 +1,18 @@
-from GPIO.Motor import Motor
-import RPi.GPIO as GPIO
-from core.ansicolors import AnsiColors  # type: ignore
-from helpers import calculate_speed
-from core.color_thread import ColorThread
 import config
-import GPIO.PCF8591 as ADC
+import RPi.GPIO as GPIO # type: ignore
 from gpiozero import Servo # type: ignore
-from gpiozero.pins.pigpio import PiGPIOFactory # type: ignore
+import GPIO.PCF8591 as ADC
+from GPIO.Motor import Motor
 from time import sleep, time
+from helpers import calculate_speed
+from core.ansicolors import AnsiColors  # type: ignore
+from core.color_thread import ColorThread
+from gpiozero.pins.pigpio import PiGPIOFactory # type: ignore
 
 logo = open("./logo.txt", "r")
 print(AnsiColors.OKBLUE + AnsiColors.BOLD + logo.read() + AnsiColors.ENDC + "\n")
 logo.close()
 
-factory = PiGPIOFactory()
 
 # Pinout strategy:
 # Motor left: step -> 6, dir -> 13
@@ -24,6 +23,7 @@ factory = PiGPIOFactory()
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 ADC.setup(0x48)
+factory = PiGPIOFactory()
 
 motorL = Motor(config.MOTOR_LEFT_PIN, config.MOTOR_LEFT_DIR_PIN)
 motorR = Motor(config.MOTOR_RIGHT_PIN, config.MOTOR_RIGHT_DIR_PIN)
