@@ -2,8 +2,9 @@
 
 This repo is for the code of one robot that me and my team created for an afterschool project.
 
-## The journey
-![journey](journey.jpg)
+## Path
+This is the path that the robot will go on
+![path](path.jpg)
 
 ## Dependencies
 - GPIO (preinstalled on Raspberry Pi OS)
