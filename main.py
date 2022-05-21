@@ -1,3 +1,4 @@
+from os import getenv
 import config
 import RPi.GPIO as GPIO # type: ignore
 from gpiozero import Servo # type: ignore
@@ -62,7 +63,8 @@ def close() -> None:
   exit(0)
 
 if __name__ == '__main__':
-  wait_start()
+  if(getenv('ENV', 'local') == 'production'):
+    wait_start()
   init()
 
   try:
