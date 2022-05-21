@@ -18,6 +18,7 @@ logo.close()
 # Motor left: step -> 6, dir -> 13
 # Motor right: step -> 19, dir -> 26
 # Servo motor: data -> 12
+# Start button: in -> 21
 
 # Setup GPIO
 GPIO.setmode(GPIO.BCM)
@@ -31,6 +32,13 @@ servo = Servo(config.SERVO_PIN, pin_factory=factory, initial_value=-1)
 
 # Read pixy colors in a separated thread
 color_thread = ColorThread()
+
+def wait_start() -> None:
+  print("Press start button to start")
+  GPIO.setup(config.START_BTN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+  while GPIO.input(config.START_BTN):
+    pass
+  print("Start button pressed, starting robot")
 
 def init() -> None:
   color_thread.start()
@@ -46,6 +54,7 @@ def close() -> None:
   exit(0)
 
 if __name__ == '__main__':
+  wait_start()
   init()
 
   try:

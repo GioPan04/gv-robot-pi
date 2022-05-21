@@ -31,5 +31,8 @@ SERVO_PIN = 12
 IR_ADDR=0x48
 IR_CHNL=2
 
+## Buttons
+START_BTN=21
+
 # Blocks
 BLOCKS_WHITELIST = [ 1 ]
