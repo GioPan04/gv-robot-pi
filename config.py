@@ -34,5 +34,8 @@ IR_CHNL=2
 ## Buttons
 START_BTN=21
 
+## Leds
+ACTION_LED=20
+
 # Blocks
 BLOCKS_WHITELIST = [ 1 ]

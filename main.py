@@ -26,6 +26,7 @@ GPIO.setwarnings(False)
 ADC.setup(config.IR_ADDR)
 factory = PiGPIOFactory()
 
+GPIO.setup(config.ACTION_LED, GPIO.OUT)
 motorL = Motor(config.MOTOR_LEFT_PIN, config.MOTOR_LEFT_DIR_PIN)
 motorR = Motor(config.MOTOR_RIGHT_PIN, config.MOTOR_RIGHT_DIR_PIN)
 servo = Servo(config.SERVO_PIN, pin_factory=factory, initial_value=-1)
@@ -37,15 +38,22 @@ def wait_start() -> None:
   print("Press start button to start")
   GPIO.setup(config.START_BTN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
   while GPIO.input(config.START_BTN):
-    pass
+    if(int(time()) % 2 == 0):
+      GPIO.output(config.ACTION_LED, True)
+    else:
+      GPIO.output(config.ACTION_LED, False)
+
+  GPIO.output(config.ACTION_LED, False)
   print("Start button pressed, starting robot")
 
 def init() -> None:
+  GPIO.output(config.ACTION_LED, True)
   color_thread.start()
   motorL.start()
   motorR.start()
 
 def close() -> None:
+  GPIO.output(config.ACTION_LED, False)
   motorL.stop()
   motorR.stop()
   servo.close()
