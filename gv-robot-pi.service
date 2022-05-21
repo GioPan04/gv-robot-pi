@@ -1,0 +1,15 @@
+[Unit]
+Description=GV Robot Pi service
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=root
+ExecStart=/usr/bin/python /home/pi/gv-robot-pi/main.py
+WorkingDirectory=/home/pi/gv-robot-pi
+
+[Install]
+WantedBy=multi-user.target
