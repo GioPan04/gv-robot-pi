@@ -1,4 +1,4 @@
-from os import getenv
+from os import getenv, system
 import config
 import RPi.GPIO as GPIO # type: ignore
 from gpiozero import Servo # type: ignore
@@ -114,6 +114,9 @@ if __name__ == '__main__':
       
       color_selector(color_thread.color, servo)
       # print(f"Left: {left}Hz Right: {right}Hz Distance: {distance}cm")
+
+      if(getenv('ENV', 'local') == 'production' and not GPIO.input(config.START_BTN)):
+        system('poweroff')
 
   except KeyboardInterrupt: # Don't log ^C
     pass
