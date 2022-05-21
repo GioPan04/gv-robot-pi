@@ -1,19 +1,17 @@
-from os import getenv, system
+from os import system
 import config
 import RPi.GPIO as GPIO # type: ignore
 from gpiozero import Servo # type: ignore
 import GPIO.PCF8591 as ADC
 from GPIO.Motor import Motor
 from time import sleep, time
+from core.logo import print_logo
+from core.start_waiter import wait_start
 from helpers import calculate_speed, color_selector
-from core.ansicolors import AnsiColors  # type: ignore
 from core.color_thread import ColorThread
 from gpiozero.pins.pigpio import PiGPIOFactory # type: ignore
 
-logo = open("./logo.txt", "r")
-print(AnsiColors.OKBLUE + AnsiColors.BOLD + logo.read() + AnsiColors.ENDC + "\n")
-logo.close()
-
+print_logo()
 
 # Pinout strategy:
 # Motor left: step -> 6, dir -> 13
@@ -35,18 +33,6 @@ servo = Servo(config.SERVO_PIN, pin_factory=factory, initial_value=-1)
 # Read pixy colors in a separated thread
 color_thread = ColorThread()
 
-def wait_start() -> None:
-  print("Press start button to start")
-  GPIO.setup(config.START_BTN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-  while GPIO.input(config.START_BTN):
-    if(int(time()) % 2 == 0):
-      GPIO.output(config.ACTION_LED, True)
-    else:
-      GPIO.output(config.ACTION_LED, False)
-
-  GPIO.output(config.ACTION_LED, False)
-  print("Start button pressed, starting robot")
-
 def init() -> None:
   GPIO.output(config.ACTION_LED, True)
   color_thread.start()
@@ -63,7 +49,7 @@ def close() -> None:
   exit(0)
 
 if __name__ == '__main__':
-  if(getenv('ENV', 'local') == 'production'):
+  if(not config.DEBUG):
     wait_start()
   init()
 
@@ -115,7 +101,7 @@ if __name__ == '__main__':
       color_selector(color_thread.color, servo)
       # print(f"Left: {left}Hz Right: {right}Hz Distance: {distance}cm")
 
-      if(getenv('ENV', 'local') == 'production' and not GPIO.input(config.START_BTN)):
+      if(not config.DEBUG and not GPIO.input(config.START_BTN)):
         system('poweroff')
 
   except KeyboardInterrupt: # Don't log ^C

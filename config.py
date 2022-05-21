@@ -1,6 +1,8 @@
+from os import getenv
+
 # GV Robot Pi configuration file
 
-DEBUG = True
+DEBUG = not (getenv('ENV', 'local') == 'production')
 
 # Movement
 DISTANCE = 10
