@@ -93,8 +93,8 @@ if __name__ == '__main__':
 
     top_distance = ADC.read(3)
   # Go farward forever and stay straight
-    while(not ( top_distance > 20 and top_distance < 30)):
-
+    initial = time()
+    while(initial + 42 > time()):
       distance = ADC.read(config.IR_CHNL)
       (left, right) = calculate_speed(distance, 135, config.BASE_SPEED, config.TURNING_SPEED)
       motorL.change_speed(left)
@@ -107,7 +107,15 @@ if __name__ == '__main__':
 
       if(not config.DEBUG and not GPIO.input(config.START_BTN)):
         system('poweroff')
-  
+
+    servo.value = 1
+    sleep(2)
+
+    while (not(top_distance > 20 and top_distance < 30)):
+      distance = ADC.read(config.IR_CHNL)
+      (left, right) = calculate_speed(distance, 135, config.BASE_SPEED, config.TURNING_SPEED)
+      motorL.change_speed(left)
+      motorR.change_speed(right)
 
     # Turn right
     motorL.farward()
