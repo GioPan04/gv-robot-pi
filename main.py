@@ -1,4 +1,5 @@
 from os import system
+from GPIO.car import Car
 import config
 import RPi.GPIO as GPIO # type: ignore
 from gpiozero import Servo # type: ignore
@@ -28,6 +29,7 @@ factory = PiGPIOFactory()
 GPIO.setup(config.ACTION_LED, GPIO.OUT)
 motorL = Motor(config.MOTOR_LEFT_PIN, config.MOTOR_LEFT_DIR_PIN)
 motorR = Motor(config.MOTOR_RIGHT_PIN, config.MOTOR_RIGHT_DIR_PIN)
+car = Car(motorL, motorR)
 servo = Servo(config.SERVO_PIN, pin_factory=factory, initial_value=-1)
 
 # Read pixy colors in a separated thread
@@ -52,84 +54,48 @@ if __name__ == '__main__':
   if(not config.DEBUG):
     wait_start()
   init()
+  started = time()
 
   try:
-    motorL.change_speed(150)
-    motorR.change_speed(150)
+    car.farward(150)
     sleep(1)
 
     # Turn left
-    motorL.backward()
-    motorR.farward()
-    motorL.change_speed(500)
-    motorR.change_speed(500)
-    sleep(1.2)
+    car.turn_left()
 
     # Wait 0.5 seconds
-    motorR.change_speed(1)
-    motorL.change_speed(1)
+    car.stop()
     sleep(0.5)
-
-    # Go farward for 7 seconds and stay straight
-    motorL.farward()
-    motorR.farward()
 
     initial = time()
     while initial + 7 > time():
       distance = ADC.read(config.IR_CHNL)
       (left, right) = calculate_speed(distance, 78, config.BASE_SPEED + 200, config.TURNING_SPEED)
-      motorL.change_speed(left)
-      motorR.change_speed(right)
+      car.farward(left, right)
     
     # Turn right
-    motorL.farward()
-    motorR.backward()
-    motorL.change_speed(500)
-    motorR.change_speed(500)
-    sleep(1.2)
+    car.turn_right()
 
-    motorL.farward()
-    motorR.farward()
-
-    top_distance = ADC.read(3)
   # Go farward forever and stay straight
     initial = time()
-    while(initial + 42 > time()):
+    while(initial + 52 > time()):
       distance = ADC.read(config.IR_CHNL)
       (left, right) = calculate_speed(distance, 135, config.BASE_SPEED, config.TURNING_SPEED)
-      motorL.change_speed(left)
-      motorR.change_speed(right)
+      car.farward(left, right)
       
       color_selector(color_thread.color, servo)
       # print(f"Left: {left}Hz Right: {right}Hz Distance: {distance}cm")
 
-      top_distance = ADC.read(3)
-
       if(not config.DEBUG and not GPIO.input(config.START_BTN)):
         system('poweroff')
 
-    servo.value = 1
-    sleep(2)
-
-    while (not(top_distance > 20 and top_distance < 30)):
-      distance = ADC.read(config.IR_CHNL)
-      (left, right) = calculate_speed(distance, 135, config.BASE_SPEED, config.TURNING_SPEED)
-      motorL.change_speed(left)
-      motorR.change_speed(right)
-
     # Turn right
-    motorL.farward()
-    motorR.backward()
-    motorL.change_speed(500)
-    motorR.change_speed(500)
-    sleep(1.2)
-
-    while True:
+    car.turn_right(1.3)
+    
+    while (True):
       distance = ADC.read(config.IR_CHNL)
       (left, right) = calculate_speed(distance, 28, config.BASE_SPEED, config.TURNING_SPEED)
-      motorL.change_speed(left)
-      motorR.change_speed(right)
-      
+      car.farward(left, right)
       color_selector(color_thread.color, servo)
 
   except KeyboardInterrupt: # Don't log ^C
@@ -138,4 +104,5 @@ if __name__ == '__main__':
     print(e)
   finally:
     print("Killing")
+    print(f"Time: {time() - started}")
     close()
