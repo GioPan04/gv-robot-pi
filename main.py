@@ -11,6 +11,7 @@ from core.start_waiter import wait_start
 from helpers import calculate_speed, color_selector
 from core.color_thread import ColorThread
 from gpiozero.pins.pigpio import PiGPIOFactory # type: ignore
+from core.common_func import init, close
 
 print_logo()
 
@@ -35,25 +36,21 @@ servo = Servo(config.SERVO_PIN, pin_factory=factory, initial_value=-1)
 # Read pixy colors in a separated thread
 color_thread = ColorThread()
 
-def init() -> None:
-  GPIO.output(config.ACTION_LED, True)
-  color_thread.start()
-  motorL.start()
-  motorR.start()
+def get_distance_and_blocks() -> float:
+  distance = ADC.read(config.IR_CHNL)
+  color_selector(color_thread.color, servo)
+  return distance
 
-def close() -> None:
-  GPIO.output(config.ACTION_LED, False)
-  motorL.stop()
-  motorR.stop()
-  servo.close()
-  color_thread.stop()
-  GPIO.cleanup()
-  exit(0)
+def get_abs_distance_and_blocks() -> float:
+  distanceT = ADC.read(config.IR_CHNL)
+  distanceB = ADC.read(config.IR_CHNL)
+  color_selector(color_thread.color, servo)
+  return distanceT - distanceB
 
 if __name__ == '__main__':
   if(not config.DEBUG):
     wait_start()
-  init()
+  init(color_thread, motorL, motorR)
   started = time()
 
   try:
@@ -67,49 +64,22 @@ if __name__ == '__main__':
     car.stop()
     sleep(0.5)
 
-    initial = time()
-    while initial + 7 > time():
-      distance = ADC.read(config.IR_CHNL)
-      (left, right) = calculate_speed(distance, 78, config.BASE_SPEED + 200, config.TURNING_SPEED)
-      car.straight(left, right)
-    
-    # Turn right
+    car.go(7, 78, lambda: ADC.read(config.IR_CHNL), config.BASE_SPEED + 200)
     car.turn_right()
 
-  # Go farward forever and stay straight
-    initial = time()
-    while(initial + 53 > time()):
-      distance = ADC.read(config.IR_CHNL)
-      (left, right) = calculate_speed(distance, 135, config.BASE_SPEED, config.TURNING_SPEED)
-      car.straight(left, right)
-      
-      color_selector(color_thread.color, servo)
-
-    # Turn right
+    car.go(53, 135, get_distance_and_blocks)
     car.turn_right(1.3)
 
-    while (initial + 82 > time()):
-      distanceT = ADC.read(config.IR_CHNL)
-      distanceB = ADC.read(3)
-      (left, right) = calculate_speed(distanceT - distanceB, 0, config.BASE_SPEED, config.TURNING_SPEED)
-      car.straight(left, right)
-      color_selector(color_thread.color, servo)
-    
+    car.go(29, 0, get_abs_distance_and_blocks)
     car.turn_right(1.2)
 
-    while (initial + 137.5 > time()):
-      distance = ADC.read(config.IR_CHNL)
-      (left, right) = calculate_speed(distance, 135, config.BASE_SPEED, config.TURNING_SPEED)
-      car.straight(left, right)
-      color_selector(color_thread.color, servo)
-
+    car.go(55.5, 135, get_distance_and_blocks)
     car.turn_right(1.3)
 
     while True:
       distance = ADC.read(config.IR_CHNL)
       (left, right) = calculate_speed(distance, 135, config.BASE_SPEED, config.TURNING_SPEED)
       car.straight(left, right)
-
 
   except KeyboardInterrupt: # Don't log ^C
     pass
@@ -118,4 +88,4 @@ if __name__ == '__main__':
   finally:
     print("Killing")
     print(f"Time: {time() - started}")
-    close()
+    close(color_thread, motorL, motorR, servo)

@@ -1,5 +1,7 @@
 from GPIO.Motor import Motor
-from time import sleep
+from time import sleep, time
+import config
+from helpers import calculate_speed
 
 class Car:
   def __init__(self, left_motor: Motor, right_motor: Motor) -> None:
@@ -27,6 +29,14 @@ class Car:
   def farward(self, speed: int) -> None:
     self.straight(speed, speed)
   
+  def go(self, secs: float, distance: int, callback, speed = config.BASE_SPEED, turning_speed = config.TURNING_SPEED) -> None:
+    start = time()
+    while start + secs > time():
+      current_distance = callback()
+      (left, right) = calculate_speed(current_distance, distance, speed, turning_speed)
+      self.straight(left, right)
+
+
   def straight(self, left_speed: int, right_speed: int) -> None:
     self.left.farward()
     self.right.farward()
