@@ -88,20 +88,27 @@ if __name__ == '__main__':
     # Turn right
     car.turn_right(1.3)
 
-    while (initial + 66 > time()):
-      distance = ADC.read(config.IR_CHNL)
-      (left, right) = calculate_speed(distance, 31, config.BASE_SPEED + 200, config.TURNING_SPEED)
+    while (initial + 82 > time()):
+      distanceT = ADC.read(config.IR_CHNL)
+      distanceB = ADC.read(3)
+      (left, right) = calculate_speed(distanceT - distanceB, 0, config.BASE_SPEED, config.TURNING_SPEED)
       car.straight(left, right)
-      print(distance)
       color_selector(color_thread.color, servo)
     
+    car.turn_right(1.2)
+
+    while (initial + 137.5 > time()):
+      distance = ADC.read(config.IR_CHNL)
+      (left, right) = calculate_speed(distance, 135, config.BASE_SPEED, config.TURNING_SPEED)
+      car.straight(left, right)
+      color_selector(color_thread.color, servo)
+
     car.turn_right(1.3)
 
     while True:
       distance = ADC.read(config.IR_CHNL)
       (left, right) = calculate_speed(distance, 135, config.BASE_SPEED, config.TURNING_SPEED)
       car.straight(left, right)
-      color_selector(color_thread.color, servo)
 
 
   except KeyboardInterrupt: # Don't log ^C
