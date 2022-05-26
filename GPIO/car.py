@@ -7,15 +7,15 @@ class Car:
     self.right = right_motor
   
   def turn_left(self, secs=1.2, speed=500) -> None:
-    self.left.farward()
-    self.right.backward()
+    self.left.backward()
+    self.right.farward()
     self.left.change_speed(speed)
     self.right.change_speed(speed)
     sleep(secs)
   
   def turn_right(self, secs=1.2, speed=500) -> None:
-    self.left.backward()
-    self.right.farward()
+    self.left.farward()
+    self.right.backward()
     self.left.change_speed(speed)
     self.right.change_speed(speed)
     sleep(secs)
@@ -25,9 +25,9 @@ class Car:
     self.right.change_speed(1)
   
   def farward(self, speed: int) -> None:
-    self.farward(speed, speed)
+    self.straight(speed, speed)
   
-  def farward(self, left_speed: int, right_speed: int) -> None:
+  def straight(self, left_speed: int, right_speed: int) -> None:
     self.left.farward()
     self.right.farward()
     self.left.change_speed(left_speed)

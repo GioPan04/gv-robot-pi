@@ -71,32 +71,38 @@ if __name__ == '__main__':
     while initial + 7 > time():
       distance = ADC.read(config.IR_CHNL)
       (left, right) = calculate_speed(distance, 78, config.BASE_SPEED + 200, config.TURNING_SPEED)
-      car.farward(left, right)
+      car.straight(left, right)
     
     # Turn right
     car.turn_right()
 
   # Go farward forever and stay straight
     initial = time()
-    while(initial + 52 > time()):
+    while(initial + 53 > time()):
       distance = ADC.read(config.IR_CHNL)
       (left, right) = calculate_speed(distance, 135, config.BASE_SPEED, config.TURNING_SPEED)
-      car.farward(left, right)
+      car.straight(left, right)
       
       color_selector(color_thread.color, servo)
-      # print(f"Left: {left}Hz Right: {right}Hz Distance: {distance}cm")
-
-      if(not config.DEBUG and not GPIO.input(config.START_BTN)):
-        system('poweroff')
 
     # Turn right
     car.turn_right(1.3)
-    
-    while (True):
+
+    while (initial + 66 > time()):
       distance = ADC.read(config.IR_CHNL)
-      (left, right) = calculate_speed(distance, 28, config.BASE_SPEED, config.TURNING_SPEED)
-      car.farward(left, right)
+      (left, right) = calculate_speed(distance, 31, config.BASE_SPEED + 200, config.TURNING_SPEED)
+      car.straight(left, right)
+      print(distance)
       color_selector(color_thread.color, servo)
+    
+    car.turn_right(1.3)
+
+    while True:
+      distance = ADC.read(config.IR_CHNL)
+      (left, right) = calculate_speed(distance, 135, config.BASE_SPEED, config.TURNING_SPEED)
+      car.straight(left, right)
+      color_selector(color_thread.color, servo)
+
 
   except KeyboardInterrupt: # Don't log ^C
     pass
