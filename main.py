@@ -36,14 +36,24 @@ servo = Servo(config.SERVO_PIN, pin_factory=factory, initial_value=-1)
 # Read pixy colors in a separated thread
 color_thread = ColorThread()
 
+def get_distance() -> float:
+  return ADC.read(config.IR_CHNL)
+
+def get_back_distance() -> float:
+  return ADC.read(3)
+
 def get_distance_and_blocks() -> float:
-  distance = ADC.read(config.IR_CHNL)
   color_selector(color_thread.color, servo)
-  return distance
+  return ADC.read(config.IR_CHNL)
+
+def get_abs_distance() -> float:
+  distanceT = ADC.read(config.IR_CHNL)
+  distanceB = ADC.read(3)
+  return distanceT - distanceB
 
 def get_abs_distance_and_blocks() -> float:
   distanceT = ADC.read(config.IR_CHNL)
-  distanceB = ADC.read(config.IR_CHNL)
+  distanceB = ADC.read(3)
   color_selector(color_thread.color, servo)
   return distanceT - distanceB
 
@@ -67,19 +77,26 @@ if __name__ == '__main__':
     car.go(7, 78, lambda: ADC.read(config.IR_CHNL), config.BASE_SPEED + 200)
     car.turn_right()
 
-    car.go(53, 135, get_distance_and_blocks)
-    car.turn_right(1.3)
+    car.go(52, 135, get_distance_and_blocks)
+    car.turn_right()
 
-    car.go(29, 0, get_abs_distance_and_blocks)
-    car.turn_right(1.2)
+    car.stop()
+    sleep(0.5)
+    car.go(26, 0, get_abs_distance_and_blocks)
+    car.stop()
+    servo.value = -1
+    car.go(2.5, 0, get_abs_distance)
+    car.turn_right()
 
-    car.go(55.5, 135, get_distance_and_blocks)
-    car.turn_right(1.3)
+    car.go(54.5, 135, get_distance_and_blocks)
+    car.turn_right()
 
-    while True:
-      distance = ADC.read(config.IR_CHNL)
-      (left, right) = calculate_speed(distance, 135, config.BASE_SPEED, config.TURNING_SPEED)
-      car.straight(left, right)
+    servo.value = 0.5
+    car.go(24, 135, get_distance)
+
+    car.go_backward(12, 125, get_back_distance)
+    car.stop()
+    servo.value = -1
 
   except KeyboardInterrupt: # Don't log ^C
     pass
