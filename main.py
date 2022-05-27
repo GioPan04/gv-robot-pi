@@ -75,24 +75,22 @@ if __name__ == '__main__':
     sleep(0.5)
 
     car.go(7, 78, lambda: ADC.read(config.IR_CHNL), config.BASE_SPEED + 200)
-    car.turn_right()
+    car.turn_right(1.1)
 
-    car.go(52, 135, get_distance_and_blocks)
-    car.turn_right()
-
-    car.stop()
-    sleep(0.5)
-    car.go(26, 0, get_abs_distance_and_blocks)
+    car.go(55, 135, get_distance_and_blocks)
     car.stop()
     servo.value = -1
-    car.go(2.5, 0, get_abs_distance)
-    car.turn_right()
+    car.turn_right(1.4)
 
-    car.go(54.5, 135, get_distance_and_blocks)
-    car.turn_right()
+    car.go(28.5, 70, get_distance)
+    car.turn_right(1.1)
+
+    car.go(55.5, 135, get_distance_and_blocks)
+    servo.value = -1
+    car.turn_right(1.1)
 
     servo.value = 0.5
-    car.go(24, 135, get_distance)
+    car.go(27, 135, get_distance)
 
     car.go_backward(12, 125, get_back_distance)
     car.stop()
