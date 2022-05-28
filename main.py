@@ -77,24 +77,34 @@ if __name__ == '__main__':
     car.go(7, 78, lambda: ADC.read(config.IR_CHNL), config.BASE_SPEED + 200)
     car.turn_right(1.1)
 
-    car.go(55, 135, get_distance_and_blocks)
+    car.go(40, 135, get_distance_and_blocks)
+    print("mi sposto")
+    car.go(11.5, 115, get_distance_and_blocks)
     car.stop()
-    servo.value = -1
+    servo.value = 1
     car.turn_right(1.4)
 
-    car.go(28.5, 70, get_distance)
+    car.go(23, 25, get_distance_and_blocks)
+    servo.value = 1
+    sleep(0.3)
+    servo.value = -1
+    car.go(4.5, 25, get_distance)
     car.turn_right(1.1)
 
-    car.go(55.85, 135, get_distance_and_blocks)
+    car.go(40, 135, get_distance_and_blocks)
+    servo.value = 1
+    sleep(0.3)
     servo.value = -1
+    car.go(13.3, 120, get_distance)
     car.turn_right(1.1)
 
     servo.value = 0.5
-    car.go(27, 135, get_distance)
+    car.go(26, 135, get_distance)
 
     car.go_backward(12, 125, get_back_distance)
     car.stop()
     servo.value = -1
+    sleep(0.3)
 
   except KeyboardInterrupt: # Don't log ^C
     pass
