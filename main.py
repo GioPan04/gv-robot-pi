@@ -85,7 +85,7 @@ if __name__ == '__main__':
     car.go(28.5, 70, get_distance)
     car.turn_right(1.1)
 
-    car.go(55.5, 135, get_distance_and_blocks)
+    car.go(55.85, 135, get_distance_and_blocks)
     servo.value = -1
     car.turn_right(1.1)
 
