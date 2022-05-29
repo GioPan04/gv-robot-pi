@@ -91,17 +91,21 @@ if __name__ == '__main__':
     car.go(4.5, 25, get_distance)
     car.turn_right(1.1)
 
-    car.go(40, 135, get_distance_and_blocks)
-    servo.value = 1
-    sleep(0.3)
-    servo.value = -1
-    car.go(13.3, 120, get_distance)
-    car.turn_right(1.1)
+    car.go(33, 135, get_distance_and_blocks)
+    car.go(6, 125, get_distance_and_blocks)
+    car.turn_right(1.15)
+    car.farward(150)
+    start = time()
+    while start + 17 > time():
+      color_selector(color_thread.color, servo)
 
+    car.turn_left(1.185)
+    car.farward(150)
+    sleep(12)
+    car.turn_right(1.25)
+    car.go(10, 135, get_distance)
     servo.value = 0.5
-    car.go(26, 135, get_distance)
-
-    car.go_backward(12, 125, get_back_distance)
+    car.go_backward(11, 125, get_back_distance)
     car.stop()
     servo.value = -1
     sleep(0.3)
